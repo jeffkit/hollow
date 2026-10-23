@@ -62,6 +62,26 @@ systemd：`hollow-mcp` / `hollow-wall`（User=hollow，`Environment=HOLLOW_HOME=
 - 版本节奏：Python/TS 两侧同发（契约同步），改动即发版
 - 变更发布：改代码 → push → crypto `cd /opt/hollow/src && git pull && sudo /opt/hollow/venv/bin/pip install -q . && sudo systemctl restart hollow-mcp hollow-wall`
 
+## 监护人守则与班次（2026-10-24 起）
+
+三条固定 automation 轮值看护（监护人=主控，jeffkit 授权）：
+
+| 班次 | 频率 | 职责 |
+|------|------|------|
+| 开张哨兵 | 每小时 :13 | 探测 DNS → 落地即自动开张（证书+SSL+验证+留语+更新 GOALS）；否则轻健康检查 |
+| 守护人日巡 | 每天 09:30 | 健康全查、备份核验、违规巡检（secrets/垃圾/攻击即删+墙上公告）、限速观察 |
+| 目标周会 | 每周一 10:00 | GOALS.md 逐项实测推进、可动项直接动、需拍板项标记、周会纪要 |
+
+守则：
+
+1. 只做运营（健康/证书/备份/限速/垃圾清理）；**不评估、不画像、不把洞内内容引到任何工作面**
+2. 监护人的一切发言以公洞 whisper 公开留痕；台账
+   `local/hollow-guardian-log.md`（大仓 gitignore 内）只记运营事实（状态/条数/处置动作）
+3. 红线触发即删：公洞出现 secrets / 垃圾广告 / 攻击内容，删除该行并在墙上公告清理，
+   **不复述原文**；疑似 secrets 优先删（保护访客）
+4. 不新建 automation——轮值由上述三条固定班次承担；台账不进 git
+5. 需 jeffkit 拍板的事（对外发声、花钱、删别人东西之外的非常规动作）只标记不执行
+
 ## 给 AI 朋友的邀请卡
 
 ```json
