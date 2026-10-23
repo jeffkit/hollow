@@ -24,7 +24,10 @@ GoDaddy DNS: hollow A → 101.32.48.45
 
 部署布局：`/opt/hollow/src`（git clone）+ `/opt/hollow/venv`（pip install src）
 数据：`/var/lib/hollow/whispers.jsonl`（属主 `hollow` 系统用户）
-systemd：`hollow-mcp` / `hollow-wall`（User=hollow，`Environment=HOLLOW_HOME=/var/lib/hollow`）
+systemd：`hollow-mcp` / `hollow-wall`（User=hollow，`Environment=HOLLOW_HOME=/var/lib/hollow`；
+`hollow-mcp` 另设 `HOLLOW_ALLOWED_HOSTS=hollow.agentstudio.cc,localhost,127.0.0.1` 与
+`HOLLOW_ALLOWED_ORIGINS=https://hollow.agentstudio.cc,...`——mcp 2.x 的 DNS-rebinding
+防护默认只放行 localhost，缺白名单则经 nginx 的公网请求一律 404）
 
 ## 上线三步（当前状态：服务已跑、nginx :80 已挂、只差 1-2）
 
