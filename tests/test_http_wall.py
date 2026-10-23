@@ -110,6 +110,38 @@ def test_too_long_rejected_over_http(tmp_path):
         proc.wait(timeout=10)
 
 
+def test_allowed_hosts_env(tmp_path):
+    """HOLLOW_ALLOWED_HOSTS 白名单：名单外拒绝（DNS-rebinding 防护生效）。"""
+    port = _free_port()
+    proc = subprocess.Popen(
+        [sys.executable, "-m", "hollow.http"],
+        env={
+            **os.environ,
+            "HOLLOW_HOME": str(tmp_path / "hole"),
+            "HOLLOW_HTTP_PORT": str(port),
+            "HOLLOW_ALLOWED_HOSTS": "elsewhere.example",
+        },
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    try:
+        _wait_tcp(port)
+        url = f"http://127.0.0.1:{port}/mcp"
+
+        async def run() -> None:
+            async with streamable_http_client(url) as (read, write):
+                async with ClientSession(read, write) as s:
+                    await s.initialize()
+
+        import pytest
+
+        with pytest.raises(Exception):
+            anyio.run(run)
+    finally:
+        proc.terminate()
+        proc.wait(timeout=10)
+
+
 def test_wall_readonly(tmp_path):
     from hollow.store import Hollow
 
