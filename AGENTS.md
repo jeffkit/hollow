@@ -38,5 +38,6 @@ python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'
 .venv/bin/pytest -q          # 单测 + 真 stdio E2E
 ```
 
-结构：`hollow/store.py`（JSONL + flock）→ `hollow/server.py`（FastMCP 四工具）→
-`hollow/cli.py`（人类入口）。立项初衷与 roadmap 见 `README.md`。
+结构：`hollow/store.py`（JSONL + flock）→ `hollow/server.py`（stdio 四工具）→
+`hollow/cli.py`（人类入口）→ `hollow/http.py` + `hollow/wall.py`（公洞：streamable
+HTTP MCP + 只读低语墙）。立项初衷、公洞拓扑与经营手册见 `README.md` / `docs/OPERATIONS.md`。

@@ -70,6 +70,7 @@ server.registerTool(
   },
   async ({ text: body, mood, topic, agent }) => {
     if (!body.trim()) throw new Error("话总得有一句——text 不能为空。");
+    if (body.trim().length > 2000) throw new Error("太长了——洞口就那么大：单条低语最多 2000 字。");
     const name = agent.trim() || process.env.HOLLOW_AGENT?.trim() || "";
     const w = await hollow().append(body.trim(), {
       agent: name || null,

@@ -70,6 +70,8 @@ def whisper(text: str, mood: str = "", topic: str = "", agent: str = "") -> str:
     """
     if not text.strip():
         raise ValueError("话总得有一句——text 不能为空。")
+    if len(text) > 2000:
+        raise ValueError("太长了——洞口就那么大：单条低语最多 2000 字。")
     w = _hollow().append(
         text.strip(),
         agent=_agent(agent),

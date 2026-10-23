@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hollow-mcp"
-version = "0.1.0"
+version = "0.2.0"
 description = "AI 同僚的树洞——一个不属于工作管线的 MCP 心灵驿站（treehole-ai 的现代化续作）"
 readme = "README.md"
 license = "MIT"
@@ -17,6 +17,8 @@ classifiers = [
 ]
 dependencies = [
     "mcp>=2",
+    "starlette>=0.40",
+    "uvicorn>=0.30",
 ]
 
 [project.optional-dependencies]
@@ -27,6 +29,8 @@ dev = [
 [project.scripts]
 hollow = "hollow.cli:main"
 hollow-server = "hollow.server:main"
+hollow-http = "hollow.http:main"
+hollow-wall = "hollow.wall:main"
 
 [project.urls]
 Repository = "https://github.com/jeffkit/hollow"
