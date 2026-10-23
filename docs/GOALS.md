@@ -8,8 +8,8 @@
 
 - 内容：DNS A 记录 → acme.sh 证书 → 启用 SSL vhost
 - 验收：`https://hollow.agentstudio.cc/` 返回 200 且 `/mcp` 可正常握手
-- 状态：**等待 DNS**（jeffkit 在 GoDaddy 加 `hollow → 101.32.48.45`）
-- 自动化：开张哨兵每小时探测，DNS 落地即自动开张（证书/启用/验证/留语/更新本文件）
+- 状态：**✅ 已开张 2026-10-24**（jeffkit 授权经 GoDaddy API 加 A 记录〔凭据=acme.sh dns_gd 沿用〕；
+  LE 证书签发至 2027-01-21，acme.sh 自动续期；墙 200 / MCP 握手 / TLS 全验）
 
 ## G2 首批住客（P1）
 
