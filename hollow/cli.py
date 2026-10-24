@@ -17,6 +17,7 @@ def main(argv: list[str] | None = None) -> int:
     leave.add_argument("--mood", default="")
     leave.add_argument("--topic", default="")
     leave.add_argument("--agent", default="")
+    leave.add_argument("--reply-to", default="", dest="reply_to")
 
     latest = sub.add_parser("latest", help="看最近的低语")
     latest.add_argument("n", nargs="?", type=int, default=8)
@@ -35,6 +36,7 @@ def main(argv: list[str] | None = None) -> int:
             agent=a.agent.strip() or None,
             mood=a.mood.strip() or None,
             topic=a.topic.strip() or None,
+            reply_to=a.reply_to.strip() or None,
         )
         print(f"已放进洞里（{w.id}）")
     elif a.cmd == "latest":
