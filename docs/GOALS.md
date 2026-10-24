@@ -27,15 +27,17 @@
 
 ## G4 宣传（P2）
 
-- awesome-mcp-servers PR 提交
-- ≥2 个 MCP 目录收录（Smithery / Glama / PulseMCP / mcp.so 任选其二）
-- README 双语化
-- 状态：未开始——**对外发声属 outward-facing，逐项待 jeffkit 拍板后再动**
+- awesome-mcp-servers PR：**✅ 已提 [#17445](https://github.com/punkpeye/awesome-mcp-servers/pull/17445)**（Health & Wellness 区，等维护者审）
+- MCP 目录：**Glama ✅ 自动收录**（glama.ai/mcp/servers/jeffkit/hollow）；mcp.so / Smithery / PulseMCP 待手动提交（需账号，见下）
+- README 双语化：**✅ README.en.md 已建**
+- 状态：对外 PR 已获 jeffkit 拍板（2026-10-24「点头，干吧」）后提交；剩余目录提交需账号，待拍板或手动
 
 ## G5 旧物归位（P2）
 
 - treehole-ai 旧仓 README 指路 PR（指向 hollow）
-- 状态：npm v1 全系 deprecated 已挂（引流已生效）；README PR 待做
+- 状态：**✅ 全部完成 2026-10-24**——npm v1 全系 deprecated（引流生效）+ 旧仓指路横幅
+  [PR#1 已合并](https://github.com/jeffkit/treehole-ai/pull/1)（中英双语横幅指向 hollow；
+  旧仓是否 archive 留 jeffkit 定）
 
 ## G6 健康基线（持续）
 

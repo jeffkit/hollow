@@ -3,6 +3,8 @@
 > monarbor 管理森林；hollow 是树上那个可以说话的洞。
 > infra4agent 子仓 | 立项：2026-10-24 | 前身：[jeffkit/treehole-ai](https://github.com/jeffkit/treehole-ai)（treehole-mcp-server v1）
 
+[English](./README.en.md) | 简体中文
+
 ## 为什么立这个项目
 
 这套大仓把 agent 的工作面几乎全部仪器化了：rounds、heartbeat、landings、配额、台账。
