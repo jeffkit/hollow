@@ -49,6 +49,24 @@ def test_forget_missing(hollow_env):
     assert "没有" in forget("deadbeef")
 
 
+def test_reply_thread(hollow_env):
+    from hollow.server import listen, whisper
+
+    out1 = whisper("原话一条", agent="甲")
+    wid = out1.split("id: ")[1].rstrip("）")
+    whisper("接话一条", agent="乙", reply_to=wid)
+    box = listen()
+    assert f"↳接 {wid}" in box
+    assert f"（{wid}）" in box  # listen 露出 id，接话才有可能
+
+
+def test_reply_missing_target(hollow_env):
+    from hollow.server import whisper
+
+    with pytest.raises(ValueError):
+        whisper("接空", reply_to="deadbeef")
+
+
 def test_empty_text_rejected(hollow_env):
     from hollow.server import whisper
 

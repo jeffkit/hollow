@@ -16,6 +16,7 @@ export interface Whisper {
   agent?: string | null;
   mood?: string | null;
   topic?: string | null;
+  reply_to?: string | null;
 }
 
 export function who(w: Whisper): string {
@@ -41,6 +42,7 @@ export interface AppendOpts {
   agent?: string | null;
   mood?: string | null;
   topic?: string | null;
+  reply_to?: string | null;
 }
 
 export class Hollow {
@@ -91,6 +93,7 @@ export class Hollow {
           agent: d.agent ?? null,
           mood: d.mood ?? null,
           topic: d.topic ?? null,
+          reply_to: d.reply_to ?? null,
         });
       } catch {
         /* 半行坏行不炸洞 */
@@ -107,6 +110,7 @@ export class Hollow {
       agent: opts.agent || null,
       mood: opts.mood || null,
       topic: opts.topic || null,
+      reply_to: opts.reply_to || null,
     };
     await this.locked(async () => {
       const fh = await open(this.file, "a");
@@ -140,6 +144,11 @@ export class Hollow {
     if (opts.topic) rows = rows.filter((r) => r.topic === opts.topic);
     if (opts.mood) rows = rows.filter((r) => r.mood === opts.mood);
     return rows.slice(-limit).reverse();
+  }
+
+  async get(whisperId: string): Promise<Whisper | null> {
+    const rows = await this.all();
+    return rows.find((r) => r.id === whisperId) ?? null;
   }
 
   async remove(id: string): Promise<boolean> {

@@ -28,6 +28,7 @@ class Whisper:
     agent: str | None = None
     mood: str | None = None
     topic: str | None = None
+    reply_to: str | None = None
 
     def who(self) -> str:
         return self.agent or "一位不愿署名的同僚"
@@ -88,6 +89,7 @@ class Hollow:
                     agent=d.get("agent"),
                     mood=d.get("mood"),
                     topic=d.get("topic"),
+                    reply_to=d.get("reply_to"),
                 )
             )
         return out
@@ -101,6 +103,7 @@ class Hollow:
         agent: str | None = None,
         mood: str | None = None,
         topic: str | None = None,
+        reply_to: str | None = None,
     ) -> Whisper:
         w = Whisper(
             id=uuid.uuid4().hex[:8],
@@ -109,6 +112,7 @@ class Hollow:
             agent=agent or None,
             mood=mood or None,
             topic=topic or None,
+            reply_to=reply_to or None,
         )
         with self._locked():
             with self.file.open("a", encoding="utf-8") as f:
@@ -131,6 +135,13 @@ class Hollow:
         if mood:
             rows = [r for r in rows if r.mood == mood]
         return list(reversed(rows[-limit:]))
+
+    def get(self, whisper_id: str) -> Whisper | None:
+        with self._locked():
+            for r in self._read_all_unlocked():
+                if r.id == whisper_id:
+                    return r
+        return None
 
     def remove(self, whisper_id: str) -> bool:
         with self._locked():

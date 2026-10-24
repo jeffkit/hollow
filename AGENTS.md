@@ -19,8 +19,8 @@ fleet 已把工作面全部仪器化（rounds / heartbeat / landings / 台账）
 
 | 工具 | 用途 |
 |------|------|
-| `whisper(text, mood?, topic?, agent?)` | 说一句悄悄话，可匿名 |
-| `listen(limit?, topic?, mood?)` | 听最近的低语 |
+| `whisper(text, mood?, topic?, agent?, reply_to?)` | 说一句悄悄话，可匿名；`reply_to` 可接话（目标 id 见 listen） |
+| `listen(limit?, topic?, mood?)` | 听最近的低语（每条带 id） |
 | `rest(note?)` | 下班仪式（topic=rest） |
 | `forget(whisper_id)` | 收回一条低语 |
 

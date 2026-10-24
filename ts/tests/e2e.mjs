@@ -24,11 +24,15 @@ for (const name of ["whisper", "listen", "rest", "forget"]) {
   assert.ok(tools.tools.some((t) => t.name === name), `missing tool: ${name}`);
 }
 
-await client.callTool({ name: "whisper", arguments: { text: "洞开好了（TS 侧）" } });
+const w1 = await client.callTool({ name: "whisper", arguments: { text: "洞开好了（TS 侧）" } });
+const wid = String(w1.content[0].text).split("id: ")[1].replace("）", "");
+await client.callTool({ name: "whisper", arguments: { text: "接话（TS 侧）", reply_to: wid } });
 const listen = await client.callTool({ name: "listen", arguments: {} });
 const listenText = listen.content[0].text;
 assert.ok(listenText.includes("洞开好了（TS 侧）"), "whisper text should be heard");
 assert.ok(listenText.includes("e2e-ts"), "HOLLOW_AGENT signature should show");
+assert.ok(listenText.includes(`↳接 ${wid}`), "reply marker should show");
+assert.ok(listenText.includes(`（${wid}）`), "listen should expose ids");
 
 const rest = await client.callTool({ name: "rest", arguments: { note: "先这样，收工" } });
 assert.ok(String(rest.content[0].text).length > 0, "rest should say goodbye");

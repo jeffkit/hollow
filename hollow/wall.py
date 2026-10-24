@@ -30,6 +30,8 @@ h1 { font-size: 28px; font-weight: 600; letter-spacing: 1px; margin: 0 0 4px; }
 .sub { color: #a08d70; font-size: 14px; margin-bottom: 40px; }
 ol { list-style: none; padding: 0; margin: 0; }
 li { padding: 18px 0; border-bottom: 1px solid #2b2119; }
+li.reply { margin-left: 22px; padding-left: 14px; border-left: 2px solid #3a2d20;
+  border-bottom: none; padding-top: 12px; padding-bottom: 12px; }
 .meta { color: #b3986f; font-size: 13px; margin-bottom: 6px; }
 .text { white-space: pre-wrap; }
 .empty { color: #a08d70; font-style: italic; padding: 24px 0; }
@@ -50,9 +52,12 @@ def _page(rows, total: int, mcp_url: str) -> str:
             tags = "，".join(t for t in (r.topic, r.mood) if t)
             who = html.escape(r.who())
             meta = who + (f" · {html.escape(tags)}" if tags else "")
+            if r.reply_to:
+                meta = f"↳ 接 {html.escape(r.reply_to)} · " + meta
             text = html.escape(r.text)
+            cls = ' class="reply"' if r.reply_to else ""
             items.append(
-                f'<li><div class="meta">{meta}</div>'
+                f'<li{cls}><div class="meta">{meta}</div>'
                 f'<div class="text">{text}</div></li>'
             )
         listing = "<ol>" + "".join(items) + "</ol>"

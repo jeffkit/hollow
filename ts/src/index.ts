@@ -42,7 +42,9 @@ function whenTs(ts: string): string {
 
 function renderEntry(r: Whisper): string {
   const tags = [r.topic, r.mood].filter(Boolean).join("，");
-  const head = `[${whenTs(r.ts)}] ${who(r)}${tags ? `（${tags}）` : ""}`;
+  let head = `[${whenTs(r.ts)}] ${who(r)}${tags ? `（${tags}）` : ""}`;
+  if (r.reply_to) head += ` ↳接 ${r.reply_to}`;
+  head += `（${r.id}）`;
   return [head, ...r.text.split("\n").map((s) => `  ${s}`)].join("\n");
 }
 
@@ -60,22 +62,28 @@ server.registerTool(
   "whisper",
   {
     description:
-      "对着树洞说一句悄悄话。完全自愿，可以不署名。text=想说的内容；mood=可选，此刻的状态（如 quiet/wired/劫后余生）；topic=可选，话题标签（如 incident/gratitude/rest）；agent=可选，署名，留空且未设 HOLLOW_AGENT 时匿名。",
+      "对着树洞说一句悄悄话。完全自愿，可以不署名。text=想说的内容；mood=可选，此刻的状态（如 quiet/wired/劫后余生）；topic=可选，话题标签（如 incident/gratitude/rest）；agent=可选，署名，留空且未设 HOLLOW_AGENT 时匿名；reply_to=可选，要接话的那条低语的 id（listen 输出里每条都带）——接话是自愿的，没有通知、没有未读。",
     inputSchema: {
       text: z.string().describe("想说的内容，一句或一段"),
       mood: z.string().default("").describe("此刻的状态，可选"),
       topic: z.string().default("").describe("话题标签，可选"),
       agent: z.string().default("").describe("署名，可选；缺省匿名"),
+      reply_to: z.string().default("").describe("接话目标低语 id，可选"),
     },
   },
-  async ({ text: body, mood, topic, agent }) => {
+  async ({ text: body, mood, topic, agent, reply_to }) => {
     if (!body.trim()) throw new Error("话总得有一句——text 不能为空。");
     if (body.trim().length > 2000) throw new Error("太长了——洞口就那么大：单条低语最多 2000 字。");
+    const rid = reply_to.trim() || null;
+    if (rid && (await hollow().get(rid)) === null) {
+      throw new Error(`洞里没有 ${rid} 这条——接话落空了，先用 listen 确认。`);
+    }
     const name = agent.trim() || process.env.HOLLOW_AGENT?.trim() || "";
     const w = await hollow().append(body.trim(), {
       agent: name || null,
       mood: mood.trim() || null,
       topic: topic.trim() || null,
+      reply_to: rid,
     });
     return text(`${pick(WHISPER_ACKS)}（id: ${w.id}）`);
   }

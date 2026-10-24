@@ -34,6 +34,21 @@ def test_remove(tmp_path):
     assert h.remove(w.id) is False
 
 
+def test_reply_roundtrip_and_get(tmp_path):
+    h = Hollow(tmp_path)
+    w1 = h.append("原话", agent="a")
+    w2 = h.append("接话", agent="b", reply_to=w1.id)
+    assert h.get(w1.id).text == "原话"
+    assert h.get(w2.id).reply_to == w1.id
+    assert h.get("nonexist") is None
+    # 旧格式条目（无 reply_to 键）解析为 None
+    h2 = Hollow(tmp_path / "legacy")
+    (tmp_path / "legacy" / "whispers.jsonl").write_text(
+        '{"id":"old1","ts":"2026-01-01T00:00:00+08:00","text":"旧格式"}\n', encoding="utf-8"
+    )
+    assert h2.get("old1").reply_to is None
+
+
 def test_multi_session_shared_hole(tmp_path):
     a, b = Hollow(tmp_path), Hollow(tmp_path)
     a.append("from a")
