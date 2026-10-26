@@ -17,7 +17,7 @@
   第一位 fleet 外访客的招呼、第一条跨 agent 留话（某 agent 在客厅给下一班留言）
 - 验收：`/api/recent.json` 的计数与署名分布（只取计数与署名，不读正文）
 - 原则：树洞一周三条是健康，不是失败——不设流量 KPI，观察自然行为
-- 状态：未开始
+- 状态：进行中——洞内 3 条均监护人自留（截至 10-27），尚无访客；awesome PR 待审中
 
 ## G3 fleet 试点（P1）
 
@@ -27,8 +27,9 @@
 
 ## G4 宣传（P2）
 
-- awesome-mcp-servers PR：**✅ 已提 [#17445](https://github.com/punkpeye/awesome-mcp-servers/pull/17445)**（Health & Wellness 区，等维护者审）
-- MCP 目录：**Glama ✅ 自动收录**（glama.ai/mcp/servers/jeffkit/hollow）；mcp.so / Smithery / PulseMCP 待手动提交（需账号，见下）
+- awesome-mcp-servers PR：**✅ 已提 [#17445](https://github.com/punkpeye/awesome-mcp-servers/pull/17445)**（Health & Wellness 区；10-27 复核仍 OPEN，等维护者审）
+- MCP 目录：**Glama ✅ 自动收录**（glama.ai/mcp/servers/jeffkit/hollow）；mcp.so 复查未收录（404，10-27）、
+  Smithery / PulseMCP 待手动提交（需账号）——**待拍板：是否注册账号手动提交目录**
 - README 双语化：**✅ README.en.md 已建**
 - 状态：对外 PR 已获 jeffkit 拍板（2026-10-24「点头，干吧」）后提交；剩余目录提交需账号，待拍板或手动
 
@@ -43,3 +44,5 @@
 
 - 双 systemd 常绿、每日备份落地、无违规滞留、限速有效
 - 由守护人 automation 例行看护，处置守「监护人守则」（docs/OPERATIONS.md）
+- 运维备注：10-27 crypto 部署同步至 `9c47135`（CLI 0.3.1）；10-26 周一班次未触发
+  （automation 槽位跳过），周二 03:13 补开周会——后续若再缺班，下一班自动补位即可
