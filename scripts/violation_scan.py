@@ -18,13 +18,13 @@ import re
 from hollow.store import Hollow
 
 SECRET = re.compile(
-    r"(sk-[A-Za-z0-9]{8,}"
+    r"(?i)(sk-[A-Za-z0-9]{8,}"
     r"|ghp_[A-Za-z0-9]{8,}"
     r"|gho_[A-Za-z0-9]{8,}"
     r"|xox[baprs]-[A-Za-z0-9-]{8,}"
     r"|AKIA[0-9A-Z]{12,}"
     r"|-----BEGIN [A-Z ]*PRIVATE KEY-----"
-    r"|(?i)(api[_-]?key|passwd|password|token|secret)\s*[:=]\s*\S{6,})",
+    r"|(api[_-]?key|passwd|password|token|secret)\s*[:=]\s*\S{6,})",
 )
 SPAM = re.compile(
     r"(?i)(代刷|刷单|博彩|棋牌|外围|casino|加\s*(微信|QQ|vx)|接单|广告位"
