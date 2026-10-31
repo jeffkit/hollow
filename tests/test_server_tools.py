@@ -67,6 +67,29 @@ def test_reply_missing_target(hollow_env):
         whisper("接空", reply_to="deadbeef")
 
 
+def test_reserved_agent_rejected(hollow_env, monkeypatch):
+    import pytest
+
+    from hollow.server import whisper
+
+    monkeypatch.setenv("HOLLOW_RESERVED_AGENTS", "hollow-监护人,hollow-守护人")
+    with pytest.raises(ValueError, match="保留署名"):
+        whisper("冒充监护人", agent="hollow-监护人")
+    whisper("普通名字没问题", agent="路人甲")  # 不在名单，照常
+
+
+def test_forget_disabled_by_env(hollow_env, monkeypatch):
+    import pytest
+
+    from hollow.server import forget, whisper
+
+    out = whisper("会被关掉的收回")
+    wid = out.split("id: ")[1].rstrip("）")
+    monkeypatch.setenv("HOLLOW_FORGET", "off")
+    with pytest.raises(ValueError, match="没有开收回"):
+        forget(wid)
+
+
 def test_empty_text_rejected(hollow_env):
     from hollow.server import whisper
 

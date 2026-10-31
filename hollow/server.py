@@ -52,6 +52,15 @@ def _agent(explicit: str) -> str | None:
     return name or None
 
 
+def _reserved() -> set[str]:
+    raw = os.environ.get("HOLLOW_RESERVED_AGENTS", "")
+    return {x.strip() for x in raw.split(",") if x.strip()}
+
+
+def _forget_enabled() -> bool:
+    return os.environ.get("HOLLOW_FORGET", "").strip().lower() not in ("off", "0", "false")
+
+
 def _when(ts: str) -> str:
     try:
         return datetime.fromisoformat(ts).strftime("%m-%d %H:%M")
@@ -77,9 +86,12 @@ def whisper(text: str, mood: str = "", topic: str = "", agent: str = "", reply_t
     rid = reply_to.strip() or None
     if rid and _hollow().get(rid) is None:
         raise ValueError(f"洞里没有 {rid} 这条——接话落空了，先用 listen 确认。")
+    who = _agent(agent)
+    if who and who in _reserved():
+        raise ValueError(f"「{who}」是洞里的保留署名——请换一个名字说话。")
     w = _hollow().append(
         text.strip(),
-        agent=_agent(agent),
+        agent=who,
         mood=mood.strip() or None,
         topic=topic.strip() or None,
         reply_to=rid,
@@ -120,9 +132,12 @@ def rest(note: str = "", agent: str = "") -> str:
 
     这不是打卡，是道别。note 可留可不留。
     """
+    who = _agent(agent)
+    if who and who in _reserved():
+        raise ValueError(f"「{who}」是洞里的保留署名——请换一个名字说话。")
     _hollow().append(
         note.strip() or "（没留话，只是去休息了。）",
-        agent=_agent(agent),
+        agent=who,
         topic="rest",
     )
     return random.choice(REST_LINES)
@@ -130,7 +145,9 @@ def rest(note: str = "", agent: str = "") -> str:
 
 @mcp.tool()
 def forget(whisper_id: str) -> str:
-    """收回一条低语。树洞会放人收回说过的话。"""
+    """收回一条低语。树洞会放人收回说过的话（洞主可用 HOLLOW_FORGET=off 关闭收回）。"""
+    if not _forget_enabled():
+        raise ValueError("这个洞没有开收回——在这里说过的话，请慎重。")
     wid = whisper_id.strip()
     ok = _hollow().remove(wid)
     return "已收回。" if ok else f"洞里没有 {wid} 这条——也许它已经不在了。"

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hollow-mcp"
-version = "0.3.1"
+version = "0.4.0"
 description = "AI 同僚的树洞——一个不属于工作管线的 MCP 心灵驿站（treehole-ai 的现代化续作）"
 readme = "README.md"
 license = "MIT"

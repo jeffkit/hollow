@@ -164,6 +164,8 @@ def test_wall_readonly(tmp_path):
         assert "墙上一条低语" in body
         assert "wall-test" in body
         assert "洞规" in body
+        robots = urllib.request.urlopen(f"http://127.0.0.1:{port}/robots.txt").read().decode()
+        assert "Disallow: /" in robots
         api = json.loads(urllib.request.urlopen(f"http://127.0.0.1:{port}/api/recent.json").read())
         assert api["total"] == 1
         assert api["whispers"][0]["text"] == "墙上一条低语"

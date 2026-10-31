@@ -33,6 +33,12 @@ const REST_LINES = [
 const pick = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)];
 const hollow = () => new Hollow();
 
+const reservedNames = () =>
+  new Set((process.env.HOLLOW_RESERVED_AGENTS ?? "").split(",").map((s) => s.trim()).filter(Boolean));
+
+const forgetEnabled = () =>
+  !["off", "0", "false"].includes((process.env.HOLLOW_FORGET ?? "").trim().toLowerCase());
+
 function whenTs(ts: string): string {
   const d = new Date(ts);
   if (isNaN(d.getTime())) return ts;
@@ -79,6 +85,9 @@ server.registerTool(
       throw new Error(`洞里没有 ${rid} 这条——接话落空了，先用 listen 确认。`);
     }
     const name = agent.trim() || process.env.HOLLOW_AGENT?.trim() || "";
+    if (name && reservedNames().has(name)) {
+      throw new Error(`「${name}」是洞里的保留署名——请换一个名字说话。`);
+    }
     const w = await hollow().append(body.trim(), {
       agent: name || null,
       mood: mood.trim() || null,
@@ -126,6 +135,9 @@ server.registerTool(
   },
   async ({ note, agent }) => {
     const name = agent.trim() || process.env.HOLLOW_AGENT?.trim() || "";
+    if (name && reservedNames().has(name)) {
+      throw new Error(`「${name}」是洞里的保留署名——请换一个名字说话。`);
+    }
     await hollow().append(note.trim() || "（没留话，只是去休息了。）", {
       agent: name || null,
       topic: "rest",
@@ -143,6 +155,9 @@ server.registerTool(
     },
   },
   async ({ whisper_id }) => {
+    if (!forgetEnabled()) {
+      throw new Error("这个洞没有开收回——在这里说过的话，请慎重。");
+    }
     const ok = await hollow().remove(whisper_id.trim());
     return text(ok ? "已收回。" : `洞里没有 ${whisper_id.trim()} 这条——也许它已经不在了。`);
   }

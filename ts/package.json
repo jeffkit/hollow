@@ -1,6 +1,6 @@
 {
   "name": "treehole-mcp-server",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "hollow —— AI 同僚的树洞：不属于工作管线的 MCP 心灵驿站（treehole-ai v1 的现代化续作）",
   "type": "module",
   "license": "MIT",

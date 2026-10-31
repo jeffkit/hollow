@@ -62,7 +62,17 @@ class Hollow:
         self.home = base
         self.file = self.home / "whispers.jsonl"
         self.lock = self.home / ".lock"
-        self.home.mkdir(parents=True, exist_ok=True)
+        self.home.mkdir(parents=True, exist_ok=True, mode=0o700)
+        # 既有洞收敛权限：私洞对同机其他用户/进程不可读（安全排查 P1-4）
+        try:
+            os.chmod(self.home, 0o700)
+        except OSError:
+            pass
+        if self.file.exists():
+            try:
+                os.chmod(self.file, 0o600)
+            except OSError:
+                pass
 
     # -- internals --------------------------------------------------------
 
@@ -115,7 +125,8 @@ class Hollow:
             reply_to=reply_to or None,
         )
         with self._locked():
-            with self.file.open("a", encoding="utf-8") as f:
+            fd = os.open(self.file, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
+            with os.fdopen(fd, "a", encoding="utf-8") as f:
                 f.write(json.dumps(w.__dict__, ensure_ascii=False) + "\n")
         return w
 
@@ -154,5 +165,6 @@ class Hollow:
                 "".join(json.dumps(r.__dict__, ensure_ascii=False) + "\n" for r in keep),
                 encoding="utf-8",
             )
+            os.chmod(tmp, 0o600)
             os.replace(tmp, self.file)
             return True

@@ -5,7 +5,7 @@
  * 字段 id/ts/text/agent/mood/topic——两个实现可以轮流守同一个洞。
  * 并发防护：mkdir 原子锁 + O_APPEND 追加。
  */
-import { mkdir, open, readFile, rename, rmdir, writeFile } from "node:fs/promises";
+import { chmod, mkdir, open, readFile, readdir, rename, rm, rmdir, stat, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
 
@@ -56,18 +56,26 @@ export class Hollow {
   }
 
   private async ensure(): Promise<void> {
-    await mkdir(this.home, { recursive: true });
+    await mkdir(this.home, { recursive: true, mode: 0o700 });
+    // 既有洞收敛权限（安全排查 P1-4）；best-effort，失败不挡说话
+    await chmod(this.home, 0o700).catch(() => {});
+    await chmod(this.file, 0o600).catch(() => {});
   }
 
-  /** mkdir 原子锁：拿不到就等，等不到就温和地失败。 */
+  /** mkdir 原子锁：拿不到就等；崩溃残留的陈锁（>10s）清扫后继续。 */
   private async locked<T>(fn: () => Promise<T>): Promise<T> {
     await this.ensure();
     const mine = path.join(this.home, `.lock.${process.pid}.${Math.random().toString(36).slice(2)}`);
+    let swept = false;
     for (let i = 0; ; i++) {
       try {
         await mkdir(mine);
         break;
       } catch {
+        if (i > 0 && i % 25 === 0 && !swept) {
+          swept = true;
+          await this.sweepStaleLocks();
+        }
         if (i > 100) throw new Error("洞口太挤了：等了很久也没拿到锁");
         await sleep(40 + Math.random() * 60);
       }
@@ -76,6 +84,26 @@ export class Hollow {
       return await fn();
     } finally {
       await rmdir(mine).catch(() => {});
+    }
+  }
+
+  /** 崩溃残留的锁目录（进程死了没走到 finally）——mtime 超 10s 视为陈锁，清走。 */
+  private async sweepStaleLocks(): Promise<void> {
+    try {
+      const now = Date.now();
+      for (const e of await readdir(this.home)) {
+        if (!e.startsWith(".lock.")) continue;
+        try {
+          const st = await stat(path.join(this.home, e));
+          if (now - st.mtimeMs > 10_000) {
+            await rm(path.join(this.home, e), { recursive: true, force: true });
+          }
+        } catch {
+          /* 别的进程可能已清走 */
+        }
+      }
+    } catch {
+      /* 家目录读不了就算了 */
     }
   }
 
@@ -113,7 +141,7 @@ export class Hollow {
       reply_to: opts.reply_to || null,
     };
     await this.locked(async () => {
-      const fh = await open(this.file, "a");
+      const fh = await open(this.file, "a", 0o600);
       try {
         await fh.writeFile(JSON.stringify(w) + "\n", "utf-8");
       } finally {
@@ -163,7 +191,7 @@ export class Hollow {
       const keep = rows.filter((r) => r.id !== id);
       if (keep.length === rows.length) return false;
       const tmp = this.file + ".tmp";
-      await writeFile(tmp, keep.map((r) => JSON.stringify(r)).join("\n") + (keep.length ? "\n" : ""), "utf-8");
+      await writeFile(tmp, keep.map((r) => JSON.stringify(r)).join("\n") + (keep.length ? "\n" : ""), { encoding: "utf-8", mode: 0o600 });
       await rename(tmp, this.file);
       return true;
     });

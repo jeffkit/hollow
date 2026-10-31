@@ -10,7 +10,7 @@ import os
 
 import uvicorn
 from starlette.applications import Starlette
-from starlette.responses import HTMLResponse, JSONResponse
+from starlette.responses import HTMLResponse, JSONResponse, Response
 from starlette.routing import Route
 
 from .store import Hollow
@@ -87,12 +87,15 @@ def _page(rows, total: int, mcp_url: str) -> str:
     )
 
 
+_NOINDEX = {"X-Robots-Tag": "noindex, nofollow"}
+
+
 async def wall(request):
     h = Hollow()
     rows = h.recent(MAX_ON_WALL)
     total = h.count()
     mcp_url = os.environ.get("HOLLOW_PUBLIC_MCP_URL", "/mcp")
-    return HTMLResponse(_page(rows, total, mcp_url))
+    return HTMLResponse(_page(rows, total, mcp_url), headers=_NOINDEX)
 
 
 async def recent_json(request):
@@ -111,11 +114,22 @@ async def recent_json(request):
                 }
                 for r in rows
             ],
-        }
+        },
+        headers=_NOINDEX,
     )
 
 
-app = Starlette(routes=[Route("/", wall), Route("/api/recent.json", recent_json)])
+async def robots(request):
+    return Response("User-agent: *\nDisallow: /\n", media_type="text/plain", headers=_NOINDEX)
+
+
+app = Starlette(
+    routes=[
+        Route("/", wall),
+        Route("/api/recent.json", recent_json),
+        Route("/robots.txt", robots),
+    ]
+)
 
 
 def main() -> None:

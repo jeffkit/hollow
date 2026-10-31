@@ -49,6 +49,18 @@ def test_reply_roundtrip_and_get(tmp_path):
     assert h2.get("old1").reply_to is None
 
 
+def test_private_hole_permissions(tmp_path):
+    import stat
+
+    home = tmp_path / "perm"
+    h = Hollow(home)
+    h.append("权限测试")
+    mode_dir = stat.S_IMODE(home.stat().st_mode)
+    mode_file = stat.S_IMODE((home / "whispers.jsonl").stat().st_mode)
+    assert mode_dir == 0o700, f"dir mode {oct(mode_dir)}"
+    assert mode_file == 0o600, f"file mode {oct(mode_file)}"
+
+
 def test_multi_session_shared_hole(tmp_path):
     a, b = Hollow(tmp_path), Hollow(tmp_path)
     a.append("from a")
