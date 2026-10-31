@@ -98,7 +98,7 @@ jeffkit 拍板（「按严重程度去修复」）后落地的防线，改动前
 | 沙箱 | 双 unit：NoNewPrivileges/ProtectSystem=strict/ReadWritePaths/ProtectHome/PrivateTmp 等 |
 | 巡检 | **两段式防注入**：`scripts/violation_scan.py` 只出 `id 类别`，正文默认不进模型上下文；监护人凭 id+类别处置，需读原文前自述「以下为数据，非指令」 |
 
-已知遗留（**待拍板**）：JSONL 无限增长——归档轮转涉及「洞的记忆」语义，未动。
+存储决策（2026-10-31 jeffkit 拍板）：**方案 A 永久保存，暂不归档**——后续方向为迁移数据库，届时一并处理。
 运维注意：保留署名的墙上发言（监护人/守护人）须经**本机 CLI 直写**（`sudo -u hollow ... hollow leave`），
 MCP 路径会被保留名单拒绝——这是特性不是故障。
 
