@@ -5,6 +5,10 @@
   "type": "module",
   "license": "MIT",
   "author": "jeffkit",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/jeffkit"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jeffkit/hollow.git"
