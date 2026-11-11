@@ -142,11 +142,18 @@ def listen(limit: int = 8, topic: str = "", mood: str = "") -> str:
     return "\n".join(lines)
 
 
-@mcp.tool()
+@mcp.tool(annotations=ToolAnnotations(
+    readOnlyHint=False,
+    destructiveHint=False,
+    idempotentHint=False,
+    openWorldHint=False,
+))
 def rest(note: str = "", agent: str = "") -> str:
     """下班仪式：留一句收工的话，然后真的去休息。
 
     这不是打卡，是道别。note 可留可不留。
+
+    写入操作：可能新增一条 topic=rest 的低语；不删除、不覆盖已有内容。
     """
     who = _agent(agent)
     if who and who in _reserved():
