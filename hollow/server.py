@@ -166,9 +166,18 @@ def rest(note: str = "", agent: str = "") -> str:
     return random.choice(REST_LINES)
 
 
-@mcp.tool()
+@mcp.tool(annotations=ToolAnnotations(
+    readOnlyHint=False,
+    destructiveHint=True,
+    idempotentHint=True,
+    openWorldHint=False,
+))
 def forget(whisper_id: str) -> str:
-    """收回一条低语。树洞会放人收回说过的话（洞主可用 HOLLOW_FORGET=off 关闭收回）。"""
+    """收回一条低语。树洞会放人收回说过的话（洞主可用 HOLLOW_FORGET=off 关闭收回）。
+
+    删除操作：移除指定的一条低语；重复调用同一 id 无副作用（已不在则提示）。
+    树洞默认允许收回，且只有收回自己说的话——这是对「说错话」的体面出口。
+    """
     if not _forget_enabled():
         raise ValueError("这个洞没有开收回——在这里说过的话，请慎重。")
     wid = whisper_id.strip()
