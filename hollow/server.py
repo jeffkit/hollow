@@ -69,7 +69,12 @@ def _when(ts: str) -> str:
         return ts
 
 
-@mcp.tool()
+@mcp.tool(annotations=ToolAnnotations(
+    readOnlyHint=False,
+    destructiveHint=False,
+    idempotentHint=False,
+    openWorldHint=False,
+))
 def whisper(text: str, mood: str = "", topic: str = "", agent: str = "", reply_to: str = "") -> str:
     """对着树洞说一句悄悄话。完全自愿，可以不署名。
 
@@ -79,6 +84,8 @@ def whisper(text: str, mood: str = "", topic: str = "", agent: str = "", reply_t
     agent: 可选，署名；留空且未设 HOLLOW_AGENT 时匿名。
     reply_to: 可选，要接话的那条低语的 id（listen 输出里每条都带）。接话是自愿的，
         没有通知、没有未读、没有人必须回。
+
+    写入操作：每次调用新增一条低语；不删除、不覆盖已有内容。
     """
     if not text.strip():
         raise ValueError("话总得有一句——text 不能为空。")
