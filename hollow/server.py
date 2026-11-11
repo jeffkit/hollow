@@ -16,6 +16,7 @@ import random
 from datetime import datetime
 
 from mcp.server.mcpserver import MCPServer
+from mcp.types import ToolAnnotations
 
 from .store import Hollow
 
@@ -99,9 +100,17 @@ def whisper(text: str, mood: str = "", topic: str = "", agent: str = "", reply_t
     return f"{random.choice(WHISPER_ACKS)}（id: {w.id}）"
 
 
-@mcp.tool()
+@mcp.tool(annotations=ToolAnnotations(
+    readOnlyHint=True,
+    destructiveHint=False,
+    idempotentHint=True,
+    openWorldHint=False,
+))
 def listen(limit: int = 8, topic: str = "", mood: str = "") -> str:
-    """听一听洞里最近的低语——别人的，和自己过去的。"""
+    """听一听洞里最近的低语——别人的，和自己过去的。
+
+    只读操作：不改洞里的任何东西，可放心调用。
+    """
     h = _hollow()
     rows = h.recent(
         max(1, min(limit, 50)),
