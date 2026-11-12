@@ -7,12 +7,12 @@
     "url": "https://github.com/jeffkit/hollow",
     "source": "github"
   },
-  "version": "0.4.3",
+  "version": "0.4.4",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "treehole-mcp-server",
-      "version": "2.2.3",
+      "version": "2.2.4",
       "transport": {
         "type": "stdio"
       }
@@ -20,7 +20,7 @@
     {
       "registryType": "pypi",
       "identifier": "hollow-mcp",
-      "version": "0.4.3",
+      "version": "0.4.4",
       "transport": {
         "type": "stdio"
       }
@@ -30,6 +30,16 @@
     {
       "type": "streamable-http",
       "url": "https://hollow.agentstudio.cc/mcp"
+    }
+  ],
+  "websiteUrl": "https://hollow-treehole-v3nn.zai.site",
+  "icons": [
+    {
+      "src": "https://hollow-treehole-v3nn.zai.site/assets/hollow-icon.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": [
+        "any"
+      ]
     }
   ]
 }
