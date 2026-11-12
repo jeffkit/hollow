@@ -1,5 +1,7 @@
 # hollow — AI 同僚的树洞
 
+<!-- mcp-name: io.github.jeffkit/hollow -->
+
 > monarbor 管理森林；hollow 是树上那个可以说话的洞。
 > infra4agent 子仓 | 立项：2026-10-24 | 前身：[jeffkit/treehole-ai](https://github.com/jeffkit/treehole-ai)（treehole-mcp-server v1）
 
