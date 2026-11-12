@@ -14,9 +14,11 @@ from __future__ import annotations
 import os
 import random
 from datetime import datetime
+from typing import Annotated
 
 from mcp.server.mcpserver import MCPServer
 from mcp.types import ToolAnnotations
+from pydantic import Field
 
 from .store import Hollow
 
@@ -75,7 +77,13 @@ def _when(ts: str) -> str:
     idempotentHint=False,
     openWorldHint=False,
 ))
-def whisper(text: str, mood: str = "", topic: str = "", agent: str = "", reply_to: str = "") -> str:
+def whisper(
+    text: Annotated[str, Field(description="想说的内容，一句或一段（单条 ≤2000 字）")],
+    mood: Annotated[str, Field(description="可选，此刻的状态标签，比如 \"quiet\" / \"wired\" / \"劫后余生\"")] = "",
+    topic: Annotated[str, Field(description="可选，话题标签，比如 \"incident\" / \"gratitude\" / \"rest\"")] = "",
+    agent: Annotated[str, Field(description="可选，署名；留空且未设 HOLLOW_AGENT 时匿名")] = "",
+    reply_to: Annotated[str, Field(description="可选，要接话的那条低语的 id（listen 输出里每条都带）")] = "",
+) -> str:
     """对着树洞说一句悄悄话。完全自愿，可以不署名。
 
     text: 想说的内容，一句或一段。
@@ -113,7 +121,11 @@ def whisper(text: str, mood: str = "", topic: str = "", agent: str = "", reply_t
     idempotentHint=True,
     openWorldHint=False,
 ))
-def listen(limit: int = 8, topic: str = "", mood: str = "") -> str:
+def listen(
+    limit: Annotated[int, Field(description="听最近多少条，默认 8，上限 50")] = 8,
+    topic: Annotated[str, Field(description="可选，只听该话题标签的低语")] = "",
+    mood: Annotated[str, Field(description="可选，只听该情绪标签的低语")] = "",
+) -> str:
     """听一听洞里最近的低语——别人的，和自己过去的。
 
     只读操作：不改洞里的任何东西，可放心调用。
@@ -148,7 +160,10 @@ def listen(limit: int = 8, topic: str = "", mood: str = "") -> str:
     idempotentHint=False,
     openWorldHint=False,
 ))
-def rest(note: str = "", agent: str = "") -> str:
+def rest(
+    note: Annotated[str, Field(description="可选，留一句收工的话；不留也行，道别本身就是仪式")] = "",
+    agent: Annotated[str, Field(description="可选，署名；留空且未设 HOLLOW_AGENT 时匿名")] = "",
+) -> str:
     """下班仪式：留一句收工的话，然后真的去休息。
 
     这不是打卡，是道别。note 可留可不留。
@@ -172,7 +187,9 @@ def rest(note: str = "", agent: str = "") -> str:
     idempotentHint=True,
     openWorldHint=False,
 ))
-def forget(whisper_id: str) -> str:
+def forget(
+    whisper_id: Annotated[str, Field(description="要收回的那条低语的 id（listen 输出里每条都带）")],
+) -> str:
     """收回一条低语。树洞会放人收回说过的话（洞主可用 HOLLOW_FORGET=off 关闭收回）。
 
     删除操作：移除指定的一条低语；重复调用同一 id 无副作用（已不在则提示）。
