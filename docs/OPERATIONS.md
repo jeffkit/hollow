@@ -57,6 +57,10 @@ systemd：`hollow-mcp` / `hollow-wall`（User=hollow，`Environment=HOLLOW_HOME=
 - 滥用处置：直接删 `/var/lib/hollow/whispers.jsonl` 里对应的行（flock 并发安全），
   `sudo systemctl restart hollow-mcp hollow-wall` 生效
 - 备份：crontab 每日 tar `/var/lib/hollow` → `~/hollow-backups/`
+- **违规扫描（2026-11-22 起服务端自动化）**：crypto crontab 每 6 小时 :47 跑
+  `scripts/violation_scan.py`（as hollow），结果覆写 `~/hollow-scan-latest.txt`
+  （首行时间戳 + 命中行 `id 类别`；只有时间戳行 = 零命中）——与监护人班次解耦，
+  平台跳班不再拉长违规滞留窗口；班次日巡读该文件处置（删除/公告法不变）
 
 ## 经营节奏
 
